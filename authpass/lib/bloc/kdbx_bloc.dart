@@ -25,6 +25,7 @@ import 'package:authpass/utils/extension_methods.dart';
 import 'package:authpass/utils/path_utils.dart';
 import 'package:authpass/utils/platform.dart';
 import 'package:biometric_storage/biometric_storage.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_async_utils/flutter_async_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -511,6 +512,15 @@ class KdbxBloc {
           analytics.events.trackQuickUnlock(value: filesOpened);
           _openedFilesQuickUnlock.clear();
           _openedFilesQuickUnlock.addAll(unlockFiles.keys);
+          // Update the amount of login attempts
+          for (final unlockFile in _openedFilesQuickUnlock) {
+            await appDataBloc.update((b, appData) => {
+                  b.quickUnlockCounter?[unlockFile.uuid] != null
+                      ? b.quickUnlockCounter![unlockFile.uuid] =
+                          b.quickUnlockCounter![unlockFile.uuid]! + 1
+                      : MapBuilder({unlockFile.uuid: 1})
+                });
+          }
           return filesOpened;
         } on AuthException catch (e, stackTrace) {
           if (e.code == AuthExceptionCode.userCanceled) {

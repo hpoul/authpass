@@ -20,6 +20,7 @@ import 'package:authpass/env/_base.dart';
 import 'package:authpass/ui/screens/app_bar_menu.dart';
 import 'package:authpass/ui/screens/create_file.dart';
 import 'package:authpass/ui/screens/main_app_scaffold.dart';
+import 'package:authpass/ui/screens/master_password_change.dart';
 import 'package:authpass/ui/screens/onboarding/onboarding.dart';
 import 'package:authpass/ui/widgets/authpass_progress_indicator.dart';
 import 'package:authpass/ui/widgets/link_button.dart';
@@ -914,16 +915,20 @@ class _SelectUrlDialogState extends State<SelectUrlDialog> {
 }
 
 class CredentialsScreen extends StatefulWidget {
-  const CredentialsScreen({super.key, required this.kdbxFilePath});
+  const CredentialsScreen(
+      {super.key, required this.kdbxFilePath, required this.validatePassword});
 
-  static Route<void> route(FileSource kdbxFilePath) => MaterialPageRoute<void>(
+  static Route<void> route(FileSource kdbxFilePath, [bool? validatePassword]) =>
+      MaterialPageRoute<void>(
         settings: const RouteSettings(name: '/credentials'),
         builder: (context) => CredentialsScreen(
           kdbxFilePath: kdbxFilePath,
+          validatePassword: validatePassword ?? false,
         ),
       );
 
   final FileSource kdbxFilePath;
+  final bool validatePassword;
 
   @override
   _CredentialsScreenState createState() => _CredentialsScreenState();
@@ -1047,50 +1052,69 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
                   },
                 ),
               ),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(right: 32, left: 32),
-                child: TextButton.icon(
-//                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  icon: Icon(_keyFile == null
-                      ? FontAwesomeIcons.folderOpen
-                      : FontAwesomeIcons.penToSquare),
-                  label: Text(_keyFile == null
-                      ? loc.useKeyFile
-                      : path.basename(_keyFile!.displayName!)),
-                  onPressed: () async {
-                    _invalidPassword = null;
-                    if (AuthPassPlatform.isIOS || AuthPassPlatform.isAndroid) {
-                      final fileInfo = await FilePickerWritable()
-                          .openFile((fileInfo, file) async {
-                        final keyFile = KeyFileInfo(
-                            fileInfo: fileInfo,
-                            bytes: await file.readAsBytes());
-                        setState(() {
-//                          writeTe
-                          _keyFile = keyFile;
-                        });
-                        return fileInfo;
-                      });
-                      if (fileInfo == null) {
-                        setState(() => _keyFile = null);
-                      }
-                    } else {
-                      final file = await openFile();
-                      if (file != null) {
-                        setState(() {
-                          _keyFile = KeyFileFile(file);
-                        });
-                      } else {
-                        setState(() {
-                          _keyFile = null;
-                        });
-                      }
-                    }
-                  },
-                ),
-              ),
-              ...(_biometricQuickUnlockSupported
+              ...(widget.validatePassword
+                  ? [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(right: 32, left: 32),
+                        child: TextButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                                MasterPasswordChangeScreen.route(
+                                    fileSource: widget.kdbxFilePath));
+                          },
+                          icon: const Icon(Icons.lock),
+                          label: Text(loc.changeMasterPasswordActionLabel),
+                        ),
+                      ),
+                    ]
+                  : [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(right: 32, left: 32),
+                        child: TextButton.icon(
+                          //                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          icon: Icon(_keyFile == null
+                              ? FontAwesomeIcons.folderOpen
+                              : FontAwesomeIcons.penToSquare),
+                          label: Text(_keyFile == null
+                              ? loc.useKeyFile
+                              : path.basename(_keyFile!.displayName!)),
+                          onPressed: () async {
+                            _invalidPassword = null;
+                            if (AuthPassPlatform.isIOS ||
+                                AuthPassPlatform.isAndroid) {
+                              final fileInfo = await FilePickerWritable()
+                                  .openFile((fileInfo, file) async {
+                                final keyFile = KeyFileInfo(
+                                    fileInfo: fileInfo,
+                                    bytes: await file.readAsBytes());
+                                setState(() {
+                                  //                          writeTe
+                                  _keyFile = keyFile;
+                                });
+                                return fileInfo;
+                              });
+                              if (fileInfo == null) {
+                                setState(() => _keyFile = null);
+                              }
+                            } else {
+                              final file = await openFile();
+                              if (file != null) {
+                                setState(() {
+                                  _keyFile = KeyFileFile(file);
+                                });
+                              } else {
+                                setState(() {
+                                  _keyFile = null;
+                                });
+                              }
+                            }
+                          },
+                        ),
+                      )
+                    ]),
+              ...(_biometricQuickUnlockSupported && !widget.validatePassword
                   ? [
                       CheckboxListTile(
                         value: _biometricQuickUnlockActivated,
@@ -1147,7 +1171,9 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
           Credentials.composite(
               pw == CharConstants.empty ? null : ProtectedValue.fromString(pw),
               keyFileContents),
-          addToQuickUnlock: _biometricQuickUnlockActivated ?? false,
+          addToQuickUnlock: widget.validatePassword != true &&
+              _biometricQuickUnlockActivated != null &&
+              _biometricQuickUnlockActivated!,
         );
         // TODO handle subsequent errors.
         final openIt = StreamIterator(openFileStream);
@@ -1168,6 +1194,8 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
           source: widget.kdbxFilePath.typeDebug,
         );
         final fileSource = fileResult.kdbxOpenedFile!.fileSource;
+        await deps.appDataBloc.update(
+            (b, appData) => {b.quickUnlockCounter?[fileSource.uuid] = 0});
         unawaited(kdbxBloc.continueLoadInBackground(openIt,
             debugName: fileSource.displayName, fileSource: fileSource));
         await Navigator.of(context)

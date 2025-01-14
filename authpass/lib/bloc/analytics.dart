@@ -464,6 +464,8 @@ abstract class AnalyticsEvents implements AnalyticsEventStubs {
   void trackBackupBanner(BannerAction action);
 
   void trackAutofillBanner(BannerAction action);
+
+  void trackRememberPasswordBanner(BannerAction action);
 }
 
 enum BannerAction {

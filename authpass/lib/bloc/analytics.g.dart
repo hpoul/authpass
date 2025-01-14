@@ -454,4 +454,10 @@ class _$AnalyticsEvents extends AnalyticsEvents with AnalyticsEventStubsImpl {
         'autofillBanner',
         <String, Object?>{'action': action.toString()},
       );
+
+  @override
+  void trackRememberPasswordBanner(BannerAction action) => trackEvent(
+        'rememberPasswordBanner',
+        <String, Object?>{'action': action.toString()},
+      );
 }

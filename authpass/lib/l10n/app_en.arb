@@ -168,7 +168,7 @@
   "@preferenceAllowScreenshots": {},
   "preferenceEnableAutoFill": "Enable autofill",
   "@preferenceEnableAutoFill": {},
-  "enableAutofillSuggestionBanner": "You can you can fill field of other application by enabling autofill!",
+  "enableAutofillSuggestionBanner": "You can fill field of other application by enabling autofill!",
   "@enableAutofillSuggestionBanner": {
     "description": "This text will shown as a banner on top of password list"
   },
@@ -182,6 +182,18 @@
   },
   "preferenceAutoFillDescription": "Only supported on Android Oreo (8.0) or later.",
   "@preferenceAutoFillDescription": {},
+    "rememberPasswordBanner": "Make sure to remember your master password!",
+  "@rememberPasswordBanner": {
+    "description": "This text will shown as a banner on top of password list"
+  },
+  "dismissRememberPasswordBannerButton": "DISMISS",
+  "@dismissRememberPasswordBannerButton": {
+    "description": "Button that is displayed in remember password warnings to dismiss password validation"
+  },
+  "validateRememberPasswordBannerButton": "VALIDATE!",
+  "@validateRememberPasswordBannerButton": {
+    "description": "Button that is displayed in remember password warnings to validate password"
+  },
   "preferenceTitle": "Preferences",
   "@preferenceTitle": {},
   "preferenceEnableSystemWideShortcuts": "Enable system wide shortcuts",

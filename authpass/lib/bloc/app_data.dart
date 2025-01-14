@@ -206,6 +206,8 @@ abstract class AppData implements Built<AppData, AppDataBuilder>, HasToJson {
 
   bool? get dismissedAutofillSuggestion;
 
+  bool? get dismissedRememberPassword;
+
   double? get themeVisualDensity;
 
   double? get themeFontSizeFactor;
@@ -238,6 +240,9 @@ abstract class AppData implements Built<AppData, AppDataBuilder>, HasToJson {
   /// Fields used for searching. By default [CommonFields.defaultSearchFields]
   /// Values must be comma separated or `*` for all fields.
   String? get searchFields;
+
+  // Records the uuid of the FileSource for every quick unlock
+  BuiltMap<String, int>? quickUnlockCounter;
 
   @BuiltValueHook(initializeBuilder: true)
   static void _setDefaults(AppDataBuilder b) => b..systemWideShortcuts = false;

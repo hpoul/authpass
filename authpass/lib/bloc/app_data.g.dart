@@ -17,7 +17,10 @@ Serializers _$serializers = (new Serializers().toBuilder()
           () => new SetBuilder<String>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
-          () => new ListBuilder<String>()))
+          () => new ListBuilder<String>())
+      ..addBuilderFactory(
+          const FullType(BuiltMap, const [FullType(String), FullType(int)]),
+          () => new MapBuilder<String, int>()))
     .build();
 Serializer<OpenedFile> _$openedFileSerializer = new _$OpenedFileSerializer();
 Serializer<AppData> _$appDataSerializer = new _$AppDataSerializer();
@@ -201,6 +204,13 @@ class _$AppDataSerializer implements StructuredSerializer<AppData> {
         ..add(
             serializers.serialize(value, specifiedType: const FullType(bool)));
     }
+    value = object.dismissedRememberPassword;
+    if (value != null) {
+      result
+        ..add('dismissedRememberPassword')
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(bool)));
+    }
     value = object.themeVisualDensity;
     if (value != null) {
       result
@@ -263,6 +273,14 @@ class _$AppDataSerializer implements StructuredSerializer<AppData> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
+    value = object.quickUnlockCounter;
+    if (value != null) {
+      result
+        ..add('quickUnlockCounter')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                FullType(BuiltMap, const [FullType(String), FullType(int)])));
+    }
     return result;
   }
 
@@ -317,6 +335,10 @@ class _$AppDataSerializer implements StructuredSerializer<AppData> {
           result.dismissedAutofillSuggestion = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool?;
           break;
+        case 'dismissedRememberPassword':
+          result.dismissedRememberPassword = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool?;
+          break;
         case 'themeVisualDensity':
           result.themeVisualDensity = serializers.deserialize(value,
               specifiedType: const FullType(double)) as double?;
@@ -357,6 +379,16 @@ class _$AppDataSerializer implements StructuredSerializer<AppData> {
           result.searchFields = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
           break;
+        case 'quickUnlockCounter':
+          result.quickUnlockCounter;
+          final BuiltMap<String, int>? quickUnlockCounter = serializers
+                  .deserialize(value,
+                      specifiedType: FullType(
+                          BuiltMap, const [FullType(String), FullType(int)]))
+              as BuiltMap<String, int>?;
+          if (quickUnlockCounter != null) {
+            result.quickUnlockCounter = quickUnlockCounter!.toBuilder();
+          }
       }
     }
 
@@ -574,6 +606,8 @@ class _$AppData extends AppData {
   @override
   final bool? dismissedAutofillSuggestion;
   @override
+  final bool? dismissedRememberPassword;
+  @override
   final double? themeVisualDensity;
   @override
   final double? themeFontSizeFactor;
@@ -593,6 +627,8 @@ class _$AppData extends AppData {
   final bool systemWideShortcuts;
   @override
   final String? searchFields;
+  @override
+  final BuiltMap<String, int>? quickUnlockCounter;
 
   factory _$AppData([void Function(AppDataBuilder)? updates]) =>
       (new AppDataBuilder()..update(updates))._build();
@@ -606,6 +642,7 @@ class _$AppData extends AppData {
       this.theme,
       this.dismissedBackupLocalFiles,
       this.dismissedAutofillSuggestion,
+      this.dismissedRememberPassword,
       this.themeVisualDensity,
       this.themeFontSizeFactor,
       this.diacOptIn,
@@ -615,7 +652,8 @@ class _$AppData extends AppData {
       this.fetchWebsiteIcons,
       this.authPassCloudAttachments,
       required this.systemWideShortcuts,
-      this.searchFields})
+      this.searchFields,
+      this.quickUnlockCounter})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         previousFiles, r'AppData', 'previousFiles');
@@ -645,6 +683,7 @@ class _$AppData extends AppData {
         theme == other.theme &&
         dismissedBackupLocalFiles == other.dismissedBackupLocalFiles &&
         dismissedAutofillSuggestion == other.dismissedAutofillSuggestion &&
+        dismissedRememberPassword == other.dismissedRememberPassword &&
         themeVisualDensity == other.themeVisualDensity &&
         themeFontSizeFactor == other.themeFontSizeFactor &&
         diacOptIn == other.diacOptIn &&
@@ -654,7 +693,8 @@ class _$AppData extends AppData {
         fetchWebsiteIcons == other.fetchWebsiteIcons &&
         authPassCloudAttachments == other.authPassCloudAttachments &&
         systemWideShortcuts == other.systemWideShortcuts &&
-        searchFields == other.searchFields;
+        searchFields == other.searchFields &&
+        quickUnlockCounter == other.quickUnlockCounter;
   }
 
   @override
@@ -668,6 +708,7 @@ class _$AppData extends AppData {
     _$hash = $jc(_$hash, theme.hashCode);
     _$hash = $jc(_$hash, dismissedBackupLocalFiles.hashCode);
     _$hash = $jc(_$hash, dismissedAutofillSuggestion.hashCode);
+    _$hash = $jc(_$hash, dismissedRememberPassword.hashCode);
     _$hash = $jc(_$hash, themeVisualDensity.hashCode);
     _$hash = $jc(_$hash, themeFontSizeFactor.hashCode);
     _$hash = $jc(_$hash, diacOptIn.hashCode);
@@ -678,6 +719,7 @@ class _$AppData extends AppData {
     _$hash = $jc(_$hash, authPassCloudAttachments.hashCode);
     _$hash = $jc(_$hash, systemWideShortcuts.hashCode);
     _$hash = $jc(_$hash, searchFields.hashCode);
+    _$hash = $jc(_$hash, quickUnlockCounter.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -694,6 +736,7 @@ class _$AppData extends AppData {
           ..add('theme', theme)
           ..add('dismissedBackupLocalFiles', dismissedBackupLocalFiles)
           ..add('dismissedAutofillSuggestion', dismissedAutofillSuggestion)
+          ..add('dismissedRememberPassword', dismissedRememberPassword)
           ..add('themeVisualDensity', themeVisualDensity)
           ..add('themeFontSizeFactor', themeFontSizeFactor)
           ..add('diacOptIn', diacOptIn)
@@ -703,7 +746,8 @@ class _$AppData extends AppData {
           ..add('fetchWebsiteIcons', fetchWebsiteIcons)
           ..add('authPassCloudAttachments', authPassCloudAttachments)
           ..add('systemWideShortcuts', systemWideShortcuts)
-          ..add('searchFields', searchFields))
+          ..add('searchFields', searchFields)
+          ..add('quickUnlockCounter', quickUnlockCounter))
         .toString();
   }
 }
@@ -755,6 +799,11 @@ class AppDataBuilder implements Builder<AppData, AppDataBuilder> {
   set dismissedAutofillSuggestion(bool? dismissedAutofillSuggestion) =>
       _$this._dismissedAutofillSuggestion = dismissedAutofillSuggestion;
 
+  bool? _dismissedRememberPassword;
+  bool? get dismissedRememberPassword => _$this._dismissedRememberPassword;
+  set dismissedRememberPassword(bool? dismissedRememberPassword) =>
+      _$this._dismissedRememberPassword = dismissedRememberPassword;
+
   double? _themeVisualDensity;
   double? get themeVisualDensity => _$this._themeVisualDensity;
   set themeVisualDensity(double? themeVisualDensity) =>
@@ -801,6 +850,11 @@ class AppDataBuilder implements Builder<AppData, AppDataBuilder> {
   String? get searchFields => _$this._searchFields;
   set searchFields(String? searchFields) => _$this._searchFields = searchFields;
 
+  MapBuilder<String, int>? _quickUnlockCounter;
+  MapBuilder<String, int>? get quickUnlockCounter => _$this._quickUnlockCounter;
+  set quickUnlockCounter(MapBuilder<String, int>? quickUnlockCounter) =>
+      _$this._quickUnlockCounter = quickUnlockCounter;
+
   AppDataBuilder() {
     AppData._setDefaults(this);
   }
@@ -817,6 +871,7 @@ class AppDataBuilder implements Builder<AppData, AppDataBuilder> {
       _theme = $v.theme;
       _dismissedBackupLocalFiles = $v.dismissedBackupLocalFiles?.toBuilder();
       _dismissedAutofillSuggestion = $v.dismissedAutofillSuggestion;
+      _dismissedRememberPassword = $v.dismissedRememberPassword;
       _themeVisualDensity = $v.themeVisualDensity;
       _themeFontSizeFactor = $v.themeFontSizeFactor;
       _diacOptIn = $v.diacOptIn;
@@ -827,6 +882,7 @@ class AppDataBuilder implements Builder<AppData, AppDataBuilder> {
       _authPassCloudAttachments = $v.authPassCloudAttachments;
       _systemWideShortcuts = $v.systemWideShortcuts;
       _searchFields = $v.searchFields;
+      _quickUnlockCounter = $v.quickUnlockCounter?.toBuilder();
       _$v = null;
     }
     return this;
@@ -860,6 +916,7 @@ class AppDataBuilder implements Builder<AppData, AppDataBuilder> {
               theme: theme,
               dismissedBackupLocalFiles: _dismissedBackupLocalFiles?.build(),
               dismissedAutofillSuggestion: dismissedAutofillSuggestion,
+              dismissedRememberPassword: dismissedRememberPassword,
               themeVisualDensity: themeVisualDensity,
               themeFontSizeFactor: themeFontSizeFactor,
               diacOptIn: diacOptIn,
@@ -870,7 +927,8 @@ class AppDataBuilder implements Builder<AppData, AppDataBuilder> {
               authPassCloudAttachments: authPassCloudAttachments,
               systemWideShortcuts: BuiltValueNullFieldError.checkNotNull(
                   systemWideShortcuts, r'AppData', 'systemWideShortcuts'),
-              searchFields: searchFields);
+              searchFields: searchFields,
+              quickUnlockCounter: quickUnlockCounter?.build());
     } catch (_) {
       late String _$failedField;
       try {
