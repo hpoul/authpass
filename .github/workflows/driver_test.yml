@@ -70,7 +70,7 @@ jobs:
 #        echo starting ${UDID}
 #        xcrun simctl boot "${UDID:?No Simulator with this name found}"
     - name: 'Start Simulator'
-      uses: futureware-tech/simulator-action@v1
+      uses: futureware-tech/simulator-action@v2
       with:
         model: ${{ matrix.device }}
     - name: run test ${{ matrix.flavor }}

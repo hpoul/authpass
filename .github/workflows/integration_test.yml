@@ -38,7 +38,7 @@ jobs:
         BLACKBOX_SECRET: ${{ secrets.BLACKBOX_SECRET_KEY }}
       run: "./authpass/_tools/ci-install-deps.sh ios"
     - name: 'Start Simulator'
-      uses: futureware-tech/simulator-action@v1
+      uses: futureware-tech/simulator-action@v2
       with:
         model: ${{ matrix.device }}
 #    - name: List all simulators
