@@ -1751,5 +1751,6 @@
   },
   "googleDriveMorePermissionsRequired": "Additional permissions needed to access Google Drive.",
   "googleDriveRequestPermissionButtonLabel": "Request Permissions",
-  "scanQrCodeTitle": "Scan QR Code."
+  "scanQrCodeTitle": "Scan QR Code.",
+  "entropy": "Entropy:"
 }

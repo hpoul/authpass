@@ -5,6 +5,7 @@ import 'package:authpass/ui/widgets/primary_button.dart';
 import 'package:authpass/ui/widgets/slide_hide_widget.dart';
 import 'package:authpass/utils/constants.dart';
 import 'package:authpass/utils/extension_methods.dart';
+import 'package:authpass/utils/password_entropy_calculator.dart';
 import 'package:authpass/utils/password_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -94,6 +95,7 @@ class _GeneratePasswordState extends State<GeneratePassword> {
   String? _password;
   int? _passwordLength = 20;
   final _passwordLengthCustom = TextEditingController();
+  double _entropy = 0;
 
   @override
   void initState() {
@@ -120,6 +122,16 @@ class _GeneratePasswordState extends State<GeneratePassword> {
       _password = PasswordGenerator.singleton().generatePassword(
           CharacterSetCollection(_selectedCharacterSet.toList()),
           _passwordLength!);
+      _entropy = PasswordEntropyCalculator.calculate(
+        passwordLength: _passwordLength!,
+        charSetSize: _selectedCharacterSet
+            .toList(growable: false)
+            .whereNotNull()
+            .fold<int>(
+              0,
+              (previousValue, element) => previousValue + element.length,
+            ),
+      );
     });
   }
 
@@ -140,8 +152,8 @@ class _GeneratePasswordState extends State<GeneratePassword> {
                       ClipboardData(text: _password ?? CharConstants.empty));
                   ScaffoldMessenger.of(context)
                     ..hideCurrentSnackBar(reason: SnackBarClosedReason.remove)
-                    ..showSnackBar(
-                        SnackBar(content: Text(loc.copiedToClipboard)));
+                    ..showSnackBar(SnackBar(
+                        content: Text(loc.copiedToClipboard))); // NON-NLS
                 },
                 child: InputDecorator(
                   decoration: InputDecoration(
@@ -161,6 +173,13 @@ class _GeneratePasswordState extends State<GeneratePassword> {
                 ),
               ),
             ),
+            if (_entropy != 0)
+              Padding(
+                padding: const EdgeInsets.only(left: 16, bottom: 8),
+                child: Text(
+                  '${loc.entropy} ${_entropy.toStringAsFixed(2)}', // NON-NLS
+                ),
+              ),
             SimpleGridWidget(
               children: _characterSets.entries
                   .map<Widget>(
