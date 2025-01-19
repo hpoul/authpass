@@ -681,11 +681,25 @@ class _EntryDetailsState extends State<EntryDetails>
                 child: Text(loc.entryAddAttachment),
               ),
               const SizedBox(height: 16),
-              PrimaryButton(
-                icon: const Icon(Icons.save),
-                onPressed: widget.onSavedPressed,
-                child: Text(loc.saveButtonLabel),
-              ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    LinkButton(
+                      icon: const Icon(Icons.undo_outlined),
+                      onPressed: () => setState(() {
+                        _initFields(
+                            Provider.of<CommonFields>(context, listen: false));
+                      }),
+                      child: Text(loc.resetValue),
+                    ),
+                    const SizedBox(width: 16),
+                    PrimaryButton(
+                      icon: const Icon(Icons.save),
+                      onPressed: widget.onSavedPressed,
+                      child: Text(loc.saveButtonLabel),
+                    ),
+                  ]
+              )
             ],
           ),
         ),
