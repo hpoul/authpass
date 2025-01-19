@@ -104,8 +104,8 @@ class _EntryDetailsScreenState extends State<EntryDetailsScreen>
   @override
   Widget build(BuildContext context) {
     final env = Provider.of<Env>(context);
-    final vm = entryViewModel!;
-    // final vm = EntryViewModel(widget.entry, context.watch<KdbxBloc>());
+    // final vm = entryViewModel!;
+    final vm = EntryViewModel(widget.entry, context.watch<KdbxBloc>());
     final entry = widget.entry;
     final loc = AppLocalizations.of(context);
     final analytics = context.watch<Analytics>();
